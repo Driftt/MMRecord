@@ -113,7 +113,8 @@
                             value:(id)value
                     dateFormatter:(NSDateFormatter *)dateFormatter {
     if ([value isKindOfClass:[NSNumber class]]) {
-        return [NSDate dateWithTimeIntervalSince1970:[value integerValue]];
+        // DRIFTT MODIFICATION : our server has milisecond precision, so we divide by 1000
+        return [NSDate dateWithTimeIntervalSince1970:[value doubleValue] / 1000.0];
     }
     
     if (dateFormatter != nil) {
