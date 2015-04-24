@@ -401,16 +401,14 @@
 #pragma mark - Record Building
 
 - (void)obtainRecordsForProtoRecordsInContext:(NSManagedObjectContext *)context {
-    [context performBlockAndWait:^{
-        // Phase 1: Fetch
-        [self performFetchForAllRecordsAndAssociateWithProtosInContext:context];
-        
-        // Phase 2: Wonky Stuff with Relationship Primary Keys
-        [self associateRelationshipPrimaryKeyRecordProtosIfNecesary];
-        
-        // Phase 3: Create
-        [self createRecordsForProtoRecordsWithMissingRecordsInContext:context];
-    }];
+    // Phase 1: Fetch
+    [self performFetchForAllRecordsAndAssociateWithProtosInContext:context];
+
+    // Phase 2: Wonky Stuff with Relationship Primary Keys
+    [self associateRelationshipPrimaryKeyRecordProtosIfNecesary];
+
+    // Phase 3: Create
+    [self createRecordsForProtoRecordsWithMissingRecordsInContext:context];
 }
 
 - (void)establishRelationshipsForAllRecords {

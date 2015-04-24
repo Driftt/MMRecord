@@ -99,18 +99,11 @@ NSString * const AFMMRecordResponseSerializerWithDataKey = @"AFMMRecordResponseS
     return recordResponseObject;
 }
 
-- (NSManagedObjectContext *)backgroundContext {
-    NSManagedObjectContext *backgroundContext =
-        [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-    [backgroundContext setPersistentStoreCoordinator:self.context.persistentStoreCoordinator];
-    return backgroundContext;
-}
-
 - (NSArray *)recordsFromMMRecordResponse:(MMRecordResponse *)recordResponse
-                       backgroundContext:(NSManagedObjectContext *)backgroundContext {
+                       context:(NSManagedObjectContext *)context {
     __block NSMutableArray *objectIDs = [NSMutableArray array];
     
-    [backgroundContext performBlockAndWait:^{
+    [context performBlockAndWait:^{
         NSArray *records = [recordResponse records];
         
         for (MMRecord *record in records) {
@@ -183,16 +176,13 @@ NSString * const AFMMRecordResponseSerializerWithDataKey = @"AFMMRecordResponseS
 
     NSArray *responseArray = [self responseArrayFromResponseObject:responseObject
                                           keyPathForResponseObject:keyPathForResponseObject];
-    
-    NSManagedObjectContext *backgroundContext = [self backgroundContext];
-    
+
     MMRecordResponse *recordResponse = [MMRecordResponse responseFromResponseObjectArray:responseArray
                                                                            initialEntity:initialEntity
                                                                                  context:self.context
                                                                                  options:options];
     
-    NSArray *records = [self recordsFromMMRecordResponse:recordResponse
-                                       backgroundContext:backgroundContext];
+    NSArray *records = [self recordsFromMMRecordResponse:recordResponse context:self.context];
     
     *error = [debugger primaryError];
     
